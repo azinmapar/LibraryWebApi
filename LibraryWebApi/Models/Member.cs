@@ -8,7 +8,7 @@ namespace LibraryWebApi.Models
     public class Member
     {
 
-        public int Id { get; set; } 
+        public int MemberId { get; set; } 
 
         public string FullName { get; set; } = string.Empty;
 
@@ -33,7 +33,7 @@ namespace LibraryWebApi.Models
         public bool IsActive { get; set; } = true;
 
         //librarian that registered them
-        public int RegisterLibrarianId { get; set; }
+        public string RegisterLibrarianId { get; set; } = string.Empty;
 
         public Librarian RegisterLibrarian { get; set; } = new Librarian();
 

@@ -26,12 +26,11 @@ namespace LibraryWebApi.Models
         public List<Member> RegisteredMembers { get; set; } = [];
 
         //books they registered
-        public List<Book> RegisteredBooks { get; set; } = [];
+        public List<BookEdition> RegisteredEditions { get; set; } = [];
 
-        //manager that registered them (nullable for the first admin)
-        public int? RegisterManagerId {  get; set; }
+        public string RegisterManagerId { get; set; } = string.Empty;
 
-        public Librarian? RegisterManager { get; set; }
+        public Librarian RegisterManager { get; set; } = new Librarian();
 
         //if they are manager => librarians they registered
         public List<Librarian> RegisteredLibrarians { get; set; } = [];

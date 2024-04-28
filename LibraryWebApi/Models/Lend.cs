@@ -7,23 +7,23 @@ namespace LibraryWebApi.Models
     public class Lend
     {
 
-        public int Id { get; set; }
+        public int LendId { get; set; }
 
-        public int BookId { get; set; }
+        public int EditionId { get; set; }
 
-        public Book Book { get; set; } = new Book();
+        public BookEdition Edition { get; set; } = new BookEdition();
 
         public int MemberId { get; set; }
 
         public Member Member { get; set; } = new Member();
 
-        public int LibrarianId { get; set; }
+        public string LibrarianId { get; set; } = string.Empty;
 
         public Librarian Librarian { get; set; } = new Librarian();
 
         public DateTime BorrowedDate { get; set; } = DateTime.Now;
 
-        public DateTime DueDate {  get; set; } = DateTime.Now;
+        public DateTime DueDate {  get; set; } = DateTime.Now.AddDays(14);
 
         public DateTime? ReturnedDate {  get; set; }
 
