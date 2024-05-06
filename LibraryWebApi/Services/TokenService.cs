@@ -22,7 +22,7 @@ namespace LibraryWebApi.Services
             _userManager = userManager;
         }
 
-        public async Task<(string token, string refreshToken)> CreateToken(Librarian user)
+        public async Task<string> CreateToken(Librarian user)
         {
 
             var claims = new List<Claim>
@@ -31,14 +31,10 @@ namespace LibraryWebApi.Services
                 new Claim(JwtRegisteredClaimNames.Email , user.Email),
             };
 
-            var refreshClaims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub , user.Id)
-            };
+            var userRoles = await _userManager.GetRolesAsync(user);
 
-            var roles = await _userManager.GetRolesAsync(user);
-
-            foreach (var role in roles)
+            // Add roles as claims
+            foreach (var role in userRoles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
@@ -54,57 +50,49 @@ namespace LibraryWebApi.Services
                 Audience = _config["JWT:Audience"],
             };
             
-            var RefreshTokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(refreshClaims),
-                Expires = DateTime.Now.AddMonths(1),
-                SigningCredentials = creds,
-                Issuer = _config["JWT:Issuer"],
-                Audience = _config["JWT:Audience"],
-            };
+            
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            var refreshToken = tokenHandler.CreateToken(RefreshTokenDescriptor);
 
-            return (token: tokenHandler.WriteToken(token), refreshToken: tokenHandler.WriteToken(refreshToken));
+            return (tokenHandler.WriteToken(token));
         }
 
-        public string? ValidateRefreshToken(string refreshToken)
-        {
-            try
-            {
-                var validationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = _key,
-                    ValidateIssuer = true,
-                    ValidIssuer = _config["JWT:Issuer"],
-                    ValidateAudience = true,
-                    ValidAudience = _config["JWT:Audience"],
-                    ValidateLifetime = true, // Ensure the token is not expired
-                    ClockSkew = TimeSpan.Zero // Set to zero to compensate for server/client time differences
-                };
+        //public string? ValidateRefreshToken(string refreshToken)
+        //{
+        //    try
+        //    {
+        //        var validationParameters = new TokenValidationParameters
+        //        {
+        //            ValidateIssuerSigningKey = true,
+        //            IssuerSigningKey = _key,
+        //            ValidateIssuer = true,
+        //            ValidIssuer = _config["JWT:Issuer"],
+        //            ValidateAudience = true,
+        //            ValidAudience = _config["JWT:Audience"],
+        //            ValidateLifetime = true, // Ensure the token is not expired
+        //            ClockSkew = TimeSpan.Zero // Set to zero to compensate for server/client time differences
+        //        };
 
-                var tokenHandler = new JwtSecurityTokenHandler();
-                SecurityToken validatedToken;
-                var principal = tokenHandler.ValidateToken(refreshToken, validationParameters, out validatedToken);
+        //        var tokenHandler = new JwtSecurityTokenHandler();
+        //        SecurityToken validatedToken;
+        //        var principal = tokenHandler.ValidateToken(refreshToken, validationParameters, out validatedToken);
 
-                // Extract claims from the validated token
-                var userId = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        //        // Extract claims from the validated token
+        //        var userId = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
 
-                // Perform additional validation or checks if needed (e.g., verify user existence)
+        //        // Perform additional validation or checks if needed (e.g., verify user existence)
 
-                return userId; // Return the user ID
-            }
-            catch (Exception ex)
-            {
-                // Token validation failed
-                // Handle exception or return null
-                return null;
-            }
-        }
+        //        return userId; // Return the user ID
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Token validation failed
+        //        // Handle exception or return null
+        //        return null;
+        //    }
+        //}
 
     }
 }

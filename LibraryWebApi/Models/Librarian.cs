@@ -28,9 +28,9 @@ namespace LibraryWebApi.Models
         //books they registered
         public List<BookEdition> RegisteredEditions { get; set; } = [];
 
-        public string RegisterManagerId { get; set; } = string.Empty;
+        public string? RegisterManagerId { get; set; }
 
-        public Librarian RegisterManager { get; set; } = new Librarian();
+        public Librarian? RegisterManager { get; set; } 
 
         //if they are manager => librarians they registered
         public List<Librarian> RegisteredLibrarians { get; set; } = [];

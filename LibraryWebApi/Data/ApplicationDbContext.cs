@@ -60,7 +60,8 @@ namespace LibraryWebApi.Data
                 .HasOne(e => e.RegisterManager)
                 .WithMany(p => p.RegisteredLibrarians)
                 .HasForeignKey(u => u.RegisterManagerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.Entity<Member>()
                 .HasOne(e => e.RegisterLibrarian)

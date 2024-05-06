@@ -1,6 +1,9 @@
 using LibraryWebApi.Data;
+using LibraryWebApi.Interfaces;
 using LibraryWebApi.Models;
+using LibraryWebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -17,7 +20,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSwaggerGen(option =>
 {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Library API", Version = "v1" });
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -56,8 +59,10 @@ builder.Services.AddIdentity<Librarian, IdentityRole>(options =>
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 12;
+    options.Password.RequiredLength = 8;
 }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -83,6 +88,9 @@ builder.Services.AddAuthentication(options =>
 
 
 
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -94,9 +102,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 

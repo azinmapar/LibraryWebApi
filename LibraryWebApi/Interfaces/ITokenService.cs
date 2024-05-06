@@ -5,9 +5,9 @@ namespace LibraryWebApi.Interfaces
     public interface ITokenService
     {
 
-        Task<(string token, string refreshToken)> CreateToken(Librarian user);
+        Task<string> CreateToken(Librarian user);
 
-        string? ValidateRefreshToken(string refreshToken);
+        //string? ValidateRefreshToken(string refreshToken);
 
     }
 }

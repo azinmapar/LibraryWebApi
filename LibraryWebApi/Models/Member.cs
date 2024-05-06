@@ -33,9 +33,9 @@ namespace LibraryWebApi.Models
         public bool IsActive { get; set; } = true;
 
         //librarian that registered them
-        public string RegisterLibrarianId { get; set; } = string.Empty;
+        public string? RegisterLibrarianId { get; set; } = string.Empty;
 
-        public Librarian RegisterLibrarian { get; set; } = new Librarian();
+        public Librarian? RegisterLibrarian { get; set; } = new Librarian();
 
         //info on their books borrowed
         public List<Lend> Borrows { get; set; } = [];
