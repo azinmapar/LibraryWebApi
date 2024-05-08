@@ -60,14 +60,24 @@ namespace LibraryWebApi.Data
                 .HasOne(e => e.RegisterManager)
                 .WithMany(p => p.RegisteredLibrarians)
                 .HasForeignKey(u => u.RegisterManagerId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Member>()
                 .HasOne(e => e.RegisterLibrarian)
                 .WithMany(p => p.RegisteredMembers)
                 .HasForeignKey(u => u.RegisterLibrarianId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // for uniqueness
+
+            builder.Entity<Librarian>()
+                .HasIndex(b => b.NationalId)
+                .IsUnique();
+
+            builder.Entity<Librarian>()
+                .HasIndex(b => b.PhoneNumber)
+                .IsUnique();
+
 
             // two roles for librarians => 1. Manager is like an admin and can hire people too , 2. Receptionist can't hire people
             List<IdentityRole> roles = new List<IdentityRole>

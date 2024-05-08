@@ -31,6 +31,7 @@ namespace LibraryWebApi.DTOs.Librarian
         [Required]
         [MinLength(10, ErrorMessage = "National Id must be 10 characters")]
         [MaxLength(10, ErrorMessage = "National Id cannot be 10 characters")]
+        [RegularExpression("(^[0-9]*)(^[12].*)", ErrorMessage = "National ID must be numeric")]
         public string? NationalId { get; set; } = string.Empty;
 
         [Required]

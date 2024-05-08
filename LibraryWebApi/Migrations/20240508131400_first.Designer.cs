@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240428172440_first")]
+    [Migration("20240508131400_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -173,7 +173,7 @@ namespace LibraryWebApi.Migrations
 
                     b.Property<string>("NationalId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -187,13 +187,12 @@ namespace LibraryWebApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<string>("RegisterManagerId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SecurityStamp")
@@ -211,6 +210,9 @@ namespace LibraryWebApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("NationalId")
+                        .IsUnique();
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -218,6 +220,10 @@ namespace LibraryWebApi.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique()
+                        .HasFilter("[PhoneNumber] IS NOT NULL");
 
                     b.HasIndex("RegisterManagerId");
 
@@ -265,7 +271,6 @@ namespace LibraryWebApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RegisterLibrarianId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("MemberId");
@@ -304,13 +309,13 @@ namespace LibraryWebApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4d2b262c-986e-4126-9fa6-bf39505f30e8",
+                            Id = "1433f71f-9226-4e4d-a4dd-4e4b327277fb",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "ff13a3cf-6868-4abc-b701-e2e7f48772ee",
+                            Id = "3d19d52f-0d47-4bd4-bc83-c5f7ff7f0a51",
                             Name = "Receptionist",
                             NormalizedName = "RECEPTIONIST"
                         });
@@ -473,8 +478,7 @@ namespace LibraryWebApi.Migrations
                     b.HasOne("LibraryWebApi.Models.Librarian", "RegisterManager")
                         .WithMany("RegisteredLibrarians")
                         .HasForeignKey("RegisterManagerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("RegisterManager");
                 });
@@ -484,8 +488,7 @@ namespace LibraryWebApi.Migrations
                     b.HasOne("LibraryWebApi.Models.Librarian", "RegisterLibrarian")
                         .WithMany("RegisteredMembers")
                         .HasForeignKey("RegisterLibrarianId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("RegisterLibrarian");
                 });

@@ -1,13 +1,13 @@
 ﻿using LibraryWebApi.DTOs.Librarian;
 using LibraryWebApi.Extensions;
 using LibraryWebApi.Interfaces;
+using LibraryWebApi.Mappers;
 using LibraryWebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Security.Claims;
+
 
 namespace LibraryWebApi.Controllers
 {
@@ -41,7 +41,7 @@ namespace LibraryWebApi.Controllers
                 var loggedInUser = await _userManager.FindByNameAsync(User.GetUsername());
                 var loggedInUserId = loggedInUser!.Id;
 
-               
+
 
                 var newLibrarian = new Librarian
                 {
@@ -69,38 +69,25 @@ namespace LibraryWebApi.Controllers
                     if (roleResult.Succeeded)
                     {
                         // create on okay or something instead of ok
-                        return Ok(
-                            new NewLibrarianDto
-                            {
-                                Username = newLibrarian.UserName,
-                                Email = newLibrarian.Email,
-                                PhoneNumber = newLibrarian.PhoneNumber,
-                                FullName = newLibrarian.FullName,
-                                NationalId = newLibrarian.NationalId,
-                                Address = newLibrarian.Address,
-                                StartWork = newLibrarian.StartWork,
-                                IsManager = librarianDto.IsManager,
-                                
-                            }
-                            );
+                        return CreatedAtAction(nameof(GetLibrarianById), new { id = newLibrarian.Id}, librarianDto);
 
                     } else
                     {
-                        return StatusCode(500, roleResult.Errors);
+                        return StatusCode(500, roleResult.Errors.ToString());
                     }
 
 
 
                 } else
                 {
-                    return StatusCode(500, createLibrarian.Errors);
+                    return StatusCode(500, createLibrarian.Errors.ToString());
                 }
 
 
 
             }catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, ex.GetBaseException().Message);
             }
 
         }
@@ -125,6 +112,11 @@ namespace LibraryWebApi.Controllers
                 return Unauthorized("Invalid Username and/or wrong password");
             }
 
+            if (!user.IsActive)
+            {
+                return Unauthorized("This user no longer works in this Library");
+            }
+
 
             return Ok(
                 new TokenDto
@@ -134,6 +126,61 @@ namespace LibraryWebApi.Controllers
                 );
         }
 
+        [HttpGet("GetAllLibrarians")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetAllLibrarians()
+        {
+            if (!ModelState.IsValid) 
+                return BadRequest(ModelState);
+
+            var librarians = await _userManager.Users.Where( s => s.IsActive == true).ToListAsync();
+
+            var librariansDto =  librarians.Select(s => s.toGetLibrarianDto()).ToList();
+
+            return Ok(librariansDto);
+            
+        }
+
+        [HttpGet("GetLibrarianById{id}")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetLibrarianById([FromRoute] string id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var librarian = await _userManager.Users.Where(s => s.IsActive == true).FirstOrDefaultAsync(i => i.Id == id);
+            if (librarian == null)
+            {
+                return NotFound("no librarian found with this id");
+            }
+            var librarianDto = librarian.toGetLibrarianDto();
+
+            return Ok(librarianDto);
+        }
+
+
+        [HttpDelete("FireLibrarianById{id}")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> FireLibrarian([FromRoute] string id, [FromBody] FireLibrarianDto fireLibrarian)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+
+            var librarian = await _userManager.Users.Where(s => s.IsActive == true).FirstOrDefaultAsync(i => i.Id == id);
+            if (librarian == null)
+            {
+                return NotFound("no librarian found with this id");
+            }
+
+            librarian.EndWork = fireLibrarian.EndWork;
+            librarian.IsActive = false;
+
+            await _userManager.UpdateAsync(librarian);
+
+            return Ok("This Librarian no longer works in this library");
+
+        }
         
     }
 }

@@ -170,7 +170,7 @@ namespace LibraryWebApi.Migrations
 
                     b.Property<string>("NationalId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -184,7 +184,7 @@ namespace LibraryWebApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
@@ -207,6 +207,9 @@ namespace LibraryWebApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("NationalId")
+                        .IsUnique();
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -214,6 +217,10 @@ namespace LibraryWebApi.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique()
+                        .HasFilter("[PhoneNumber] IS NOT NULL");
 
                     b.HasIndex("RegisterManagerId");
 
@@ -299,13 +306,13 @@ namespace LibraryWebApi.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "71a679a8-a96d-4ba7-9039-1310a0a3a04d",
+                            Id = "1433f71f-9226-4e4d-a4dd-4e4b327277fb",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "890ea22a-a7ba-4b17-a6e7-89bbc9639574",
+                            Id = "3d19d52f-0d47-4bd4-bc83-c5f7ff7f0a51",
                             Name = "Receptionist",
                             NormalizedName = "RECEPTIONIST"
                         });

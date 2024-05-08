@@ -33,12 +33,12 @@ namespace LibraryWebApi.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NationalId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NationalId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartWork = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndWork = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    RegisterManagerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RegisterManagerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -47,7 +47,7 @@ namespace LibraryWebApi.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -201,7 +201,7 @@ namespace LibraryWebApi.Migrations
                     LastRenewedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CancelDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    RegisterLibrarianId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    RegisterLibrarianId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -287,8 +287,8 @@ namespace LibraryWebApi.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "4d2b262c-986e-4126-9fa6-bf39505f30e8", null, "Manager", "MANAGER" },
-                    { "ff13a3cf-6868-4abc-b701-e2e7f48772ee", null, "Receptionist", "RECEPTIONIST" }
+                    { "1433f71f-9226-4e4d-a4dd-4e4b327277fb", null, "Manager", "MANAGER" },
+                    { "3d19d52f-0d47-4bd4-bc83-c5f7ff7f0a51", null, "Receptionist", "RECEPTIONIST" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -322,6 +322,19 @@ namespace LibraryWebApi.Migrations
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_NationalId",
+                table: "AspNetUsers",
+                column: "NationalId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_PhoneNumber",
+                table: "AspNetUsers",
+                column: "PhoneNumber",
+                unique: true,
+                filter: "[PhoneNumber] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_RegisterManagerId",

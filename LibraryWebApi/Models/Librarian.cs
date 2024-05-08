@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace LibraryWebApi.Models
 {
+
     public class Librarian : IdentityUser
     {
 
@@ -9,6 +12,7 @@ namespace LibraryWebApi.Models
 
         public string FullName { get; set; } = string.Empty;
 
+        
         public string NationalId { get; set; } = string.Empty;
 
         public string Address { get; set; } = string.Empty;
