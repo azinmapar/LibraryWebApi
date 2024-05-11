@@ -42,5 +42,9 @@ namespace LibraryWebApi.Models
         //info on their lent books
         public List<Lend> Lends { get; set; } = [];
 
+        internal object toGetLibrarianDto(IList<string> list)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

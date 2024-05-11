@@ -78,6 +78,14 @@ namespace LibraryWebApi.Data
                 .HasIndex(b => b.PhoneNumber)
                 .IsUnique();
 
+            builder.Entity<Member>()
+                .HasIndex(b => b.NationalId)
+                .IsUnique();
+
+            builder.Entity<Member>()
+                .HasIndex(b => b.PhoneNumber)
+                .IsUnique();
+
 
             // two roles for librarians => 1. Manager is like an admin and can hire people too , 2. Receptionist can't hire people
             List<IdentityRole> roles = new List<IdentityRole>

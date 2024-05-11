@@ -17,7 +17,7 @@ namespace LibraryWebApi.Mappers
                 StartWork = librarian.StartWork,
                 Username = librarian.UserName!,
                 Email = librarian.Email!,
-                PhoneNumber = librarian.PhoneNumber!
+                PhoneNumber = librarian.PhoneNumber!,
             };
         }
 
