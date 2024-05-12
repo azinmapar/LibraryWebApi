@@ -1,5 +1,6 @@
 ﻿using LibraryWebApi.DTOs.Librarian;
 using LibraryWebApi.Extensions;
+using LibraryWebApi.Helpers;
 using LibraryWebApi.Interfaces;
 using LibraryWebApi.Mappers;
 using LibraryWebApi.Models;
@@ -127,7 +128,7 @@ namespace LibraryWebApi.Controllers
 
         [HttpGet("GetAllLibrarians")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetAllLibrarians()
+        public async Task<IActionResult> GetAllLibrarians([FromQuery] PaginaionQuery query)
         {
             if (!ModelState.IsValid) 
                 return BadRequest(ModelState);
@@ -139,9 +140,15 @@ namespace LibraryWebApi.Controllers
                 return NoContent();
             }
 
-            var librariansDto =  librarians.Select(s => s.toGetLibrarianDto()).ToList();
+            var librariansDto =  librarians.Select(s => s.ToGetLibrarianDto()).ToList();
 
-            return Ok(librariansDto);
+            //pagination
+
+            var skipLibrarians = (query.PageNumber - 1) * query.PageSize;
+
+            var paginatedLibrarians = librariansDto.Skip(skipLibrarians).Take(query.PageSize).ToList();
+
+            return Ok(paginatedLibrarians);
             
         }
 
@@ -157,7 +164,7 @@ namespace LibraryWebApi.Controllers
             {
                 return NotFound("no librarian found with this id");
             }
-            var librarianDto = librarian.toGetLibrarianDto();
+            var librarianDto = librarian.ToGetLibrarianDto();
 
             return Ok(librarianDto);
         }
@@ -206,7 +213,7 @@ namespace LibraryWebApi.Controllers
 
             await _userManager.UpdateAsync(librarian);
 
-            return CreatedAtAction(nameof(GetLibrarianById), new { id = librarianId }, librarian.toGetLibrarianDto());
+            return CreatedAtAction(nameof(GetLibrarianById), new { id = librarianId }, librarian.ToGetLibrarianDto());
 
         }
 
@@ -252,14 +259,14 @@ namespace LibraryWebApi.Controllers
             librarian.IsActive = true;
             await _userManager.UpdateAsync(librarian);
 
-            return CreatedAtAction(nameof(GetLibrarianById), new {id = librarian.Id}, librarian.toGetLibrarianDto());
+            return CreatedAtAction(nameof(GetLibrarianById), new {id = librarian.Id}, librarian.ToGetLibrarianDto());
 
 
         }
 
         [HttpGet("GetAllFiredLibrarians")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetAllFiredLibrarians()
+        public async Task<IActionResult> GetAllFiredLibrarians([FromQuery] PaginaionQuery query)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -271,9 +278,15 @@ namespace LibraryWebApi.Controllers
                 return NotFound("No librarians are fired");
             }
 
-            var librariansdto = librarians.Select(s => s.toGetLibrarianDto()).ToList(); 
+            var librariansdto = librarians.Select(s => s.ToGetLibrarianDto()).ToList(); 
 
-            return Ok(librariansdto);
+            //pagination
+
+            var skipLibrarians = (query.PageNumber - 1) * query.PageSize;
+
+            var paginatedLibrarians = librariansdto.Skip(skipLibrarians).Take(query.PageSize).ToList();
+
+            return Ok(paginatedLibrarians);
         }
 
         [HttpGet("GetFiredLibrarianById{id}")]
@@ -290,14 +303,14 @@ namespace LibraryWebApi.Controllers
                 return NotFound("No Fired librarian with this id");
             }
 
-            var librarianDro = librarian.toGetLibrarianDto();
+            var librarianDro = librarian.ToGetLibrarianDto();
 
             return Ok(librarianDro);
         }
 
         [HttpGet("GetAllReceptionists")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetAllReceptionists()
+        public async Task<IActionResult> GetAllReceptionists([FromQuery] PaginaionQuery query)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -311,12 +324,20 @@ namespace LibraryWebApi.Controllers
                 return NotFound("No Receptionists available");
             }
 
-            return Ok(available.Select(y => y.toGetLibrarianDto()));
+            var receptionistsDto = available.Select(y => y.ToGetLibrarianDto());
+
+            // pagination
+
+            var skipReceptionists = (query.PageNumber - 1) * query.PageSize;
+
+            var paginatedReceptionists = receptionistsDto.Skip(skipReceptionists).Take(query.PageSize).ToList();
+
+            return Ok(paginatedReceptionists);
         }
         
         [HttpGet("GetAllManagers")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetAllManagers()
+        public async Task<IActionResult> GetAllManagers([FromQuery] PaginaionQuery query)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -330,7 +351,15 @@ namespace LibraryWebApi.Controllers
                 return NotFound("No Managers available");
             }
 
-            return Ok(available.Select(y => y.toGetLibrarianDto()));
+            var managersDto = available.Select(y => y.ToGetLibrarianDto());
+
+            // pagination
+
+            var skipManagers = (query.PageNumber - 1) * query.PageSize;
+
+            var paginatedManagers = managersDto.Skip(skipManagers).Take(query.PageSize).ToList();
+
+            return Ok(paginatedManagers);
         }
         
     }

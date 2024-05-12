@@ -6,7 +6,7 @@ namespace LibraryWebApi.Mappers
     public static class LibrarianMapper
     {
 
-        public static GetLibrarianDto toGetLibrarianDto(this Librarian librarian)
+        public static GetLibrarianDto ToGetLibrarianDto(this Librarian librarian)
         {
             return new GetLibrarianDto
             {
@@ -18,6 +18,7 @@ namespace LibraryWebApi.Mappers
                 Username = librarian.UserName!,
                 Email = librarian.Email!,
                 PhoneNumber = librarian.PhoneNumber!,
+                RegisterManagerId = librarian.RegisterManagerId!,
             };
         }
 

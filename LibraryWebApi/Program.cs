@@ -1,3 +1,4 @@
+using LibraryWebApi;
 using LibraryWebApi.Data;
 using LibraryWebApi.Interfaces;
 using LibraryWebApi.Models;
@@ -89,6 +90,7 @@ builder.Services.AddAuthentication(options =>
 
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
 
 var app = builder.Build();

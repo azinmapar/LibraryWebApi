@@ -19,6 +19,7 @@
 
         public string PhoneNumber { get; set; } = string.Empty;
 
+        public string? RegisterManagerId { get; set; }
 
     }
 }
